@@ -1,0 +1,2 @@
+# Windows-only tooling: .cmd files in particular must keep CRLF endings.
+* text=auto eol=crlf

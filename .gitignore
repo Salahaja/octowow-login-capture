@@ -1,0 +1,5 @@
+# Captures contain the account name: the login handshake sends it unencrypted.
+octowow-login_*
+*.etl
+*.pcap
+*.pcapng
