@@ -4,7 +4,7 @@ Two small Windows tools for when the OctoWoW client sits at "Connecting…" and 
 out instead of logging in. Nothing to install: both are PowerShell scripts, and each
 has a double-click launcher.
 
-## Watch OctoWoW Login.cmd — wait for the server to come back
+## Watch OctoWoW Login.cmd / Watch OctoWoW Normal.cmd — wait for the server to come back
 
 OctoWoW sits behind DDoS scrubbing. While an attack is being filtered your packets are
 silently dropped rather than refused, which is why the client times out instead of
@@ -15,13 +15,28 @@ few seconds and beeps the moment it answers, showing how long the current state 
 lasted. It only ever opens a plain TCP connection: it never sends credentials and never
 touches the login handshake, so it is safe to leave running.
 
+- **Watch OctoWoW Login.cmd** watches `play.octowow.st`, the address the realmlist uses.
+- **Watch OctoWoW Normal.cmd** watches `normal.octowow.st` — worth knowing when play is
+  down. It has several addresses (round-robin), so all of them are probed at once and the
+  report says how many answer and which.
+
+**The addresses change now and then**, so they come from OctoWoW's own DNS server
+(`37.156.68.20`, the one the hosts updater asks) rather than your hosts file, and are
+looked up again every minute. When the server moves it says **MOVED** and carries on
+watching the new addresses. And because your client connects to whatever the hosts file
+says, it warns when that points somewhere the server no longer is — and won't tell you to
+log in while it does. That's the moment to run **Update OctoWoW Hosts**.
+
 ```
-.\Wait-ForOctoWow.ps1                        watch until it answers
-.\Wait-ForOctoWow.ps1 -Launch "D:\...\WoW.exe"   start the client when it does
+.\Wait-ForOctoWow.ps1                              watch play.octowow.st until it answers
+.\Wait-ForOctoWow.ps1 -HostName normal.octowow.st  the same for normal.octowow.st
+.\Wait-ForOctoWow.ps1 -Launch "D:\...\WoW.exe"     start the client when it does
 ```
 
-Options: `-Address`, `-Port`, `-IntervalSeconds` (default 5 — please don't set it very
-low against a host under attack), `-TimeoutSeconds`, `-Launch`, `-Quiet`.
+Options: `-HostName`, `-DnsServer`, `-ResolveEverySeconds` (default 60), `-Address`
+(fixed addresses, nothing looked up), `-Port`, `-IntervalSeconds` (default 5 — please
+don't set it very low against a host under attack), `-TimeoutSeconds`, `-Launch`,
+`-Quiet`.
 
 ## Capture OctoWoW Login.cmd — find out where a failed login dies
 
